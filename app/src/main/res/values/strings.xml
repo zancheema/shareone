@@ -4,4 +4,12 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="next">Next</string>
     <string name="select_avatar">Select Avatar</string>
+    <string name="receive_preparations">Receive\nPreparations</string>
+    <string name="receive_preparations_tools">Receive<br />Preparations</string>
+    <string name="send_preparations">Send\nPreparations</string>
+    <string name="send_preparations_tools">Send<br />Preparations</string>
+    <string name="open">Open</string>
+    <string name="open_wlan">Open WLAN</string>
+    <string name="open_location">Open Location</string>
+    <string name="nickname">Nickname</string>
 </resources>

@@ -1,17 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ripple xmlns:android="http://schemas.android.com/apk/res/android"
-    android:color="@color/blue_very_light">
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item android:id="@android:id/mask">
+    <item android:state_enabled="false">
         <shape>
-            <solid android:color="@color/blue_very_light" />
             <corners android:radius="@dimen/corner_radius_button" />
+            <solid android:color="@color/silver" />
         </shape>
     </item>
-    <item android:id="@android:id/background">
-        <shape>
-            <solid android:color="@color/blue" />
-            <corners android:radius="@dimen/corner_radius_button" />
-        </shape>
+    <item>
+        <ripple xmlns:android="http://schemas.android.com/apk/res/android"
+            android:color="@color/blue_very_light">
+
+            <item android:id="@android:id/mask">
+                <shape>
+                    <solid android:color="@color/blue_very_light" />
+                    <corners android:radius="@dimen/corner_radius_button" />
+                </shape>
+            </item>
+            <item android:id="@android:id/background">
+                <shape>
+                    <solid android:color="@color/blue" />
+                    <corners android:radius="@dimen/corner_radius_button" />
+                </shape>
+            </item>
+        </ripple>
     </item>
-</ripple>
+</selector>
