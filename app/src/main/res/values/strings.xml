@@ -12,4 +12,5 @@
     <string name="open_wlan">Open WLAN</string>
     <string name="open_location">Open Location</string>
     <string name="nickname">Nickname</string>
+    <string name="waiting">Waiting… </string>
 </resources>

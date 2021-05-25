@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+    </data>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".findsender.FindSenderFragment">
+
+        <com.skyfishjy.library.RippleBackground
+            android:id="@+id/ripple_background"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:rb_color="#0099CC"
+            app:rb_duration="3000"
+            app:rb_radius="32dp"
+            app:rb_rippleAmount="4"
+            app:rb_scale="6">
+
+            <ImageView
+                android:id="@+id/centerImage"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:layout_centerInParent="true"
+                android:src="@drawable/ic_avatar_0"
+                app:tint="?attr/colorOnPrimary" />
+        </com.skyfishjy.library.RippleBackground>
+    </FrameLayout>
+</layout>

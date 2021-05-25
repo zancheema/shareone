@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/prepareSendFragment">
+    app:startDestination="@id/findSenderFragment">
 
     <fragment
         android:id="@+id/homeFragment"
@@ -25,4 +25,8 @@
         android:name="com.zancheema.share.android.shareone.prepareSend.PrepareSendFragment"
         android:label="fragment_prepare_send"
         tools:layout="@layout/fragment_prepare_send" />
+    <fragment
+        android:id="@+id/findSenderFragment"
+        android:name="com.zancheema.share.android.shareone.findsender.FindSenderFragment"
+        android:label="@string/waiting" />
 </navigation>
