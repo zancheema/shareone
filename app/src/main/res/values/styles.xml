@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="AvatarStyle">
+        <item name="android:layout_width">@dimen/size_avatar</item>
+        <item name="android:layout_height">@dimen/size_avatar</item>
+    </style>
+
+    <style name="ButtonStyleFilled">
+        <item name="android:background">@drawable/bg_button_filled</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
+</resources>

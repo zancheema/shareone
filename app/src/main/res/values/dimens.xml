@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="size_avatar">70dp</dimen>
+    <dimen name="size_selected_avatar">100dp</dimen>
+    <dimen name="corner_radius_button">8dp</dimen>
+</resources>
