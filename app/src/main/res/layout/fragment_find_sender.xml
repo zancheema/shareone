@@ -27,8 +27,7 @@
                 android:layout_width="64dp"
                 android:layout_height="64dp"
                 android:layout_centerInParent="true"
-                android:src="@drawable/ic_avatar_0"
-                app:tint="?attr/colorOnPrimary" />
+                android:src="@drawable/ic_avatar_0" />
         </com.skyfishjy.library.RippleBackground>
     </FrameLayout>
 </layout>

@@ -2,6 +2,7 @@ package com.zancheema.share.android.shareone
 
 import android.os.Bundle
 import android.view.View
+import android.view.animation.AnimationUtils
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.navigation.NavController
@@ -18,7 +19,8 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         viewDataBinding = DataBindingUtil.setContentView(this, R.layout.activity_main)
 
-        val navHostFragment = supportFragmentManager.findFragmentById(R.id.navHostFragment) as NavHostFragment
+        val navHostFragment =
+            supportFragmentManager.findFragmentById(R.id.navHostFragment) as NavHostFragment
         navController = navHostFragment.navController
         setUpToolbar()
         setUpViewVisibility()
@@ -27,8 +29,21 @@ class MainActivity : AppCompatActivity() {
     private fun setUpViewVisibility() {
         navController.addOnDestinationChangedListener { _, destination, _ ->
             run {
-                viewDataBinding.fabSelectFiles.visibility =
-                    if (canSelectFiles(destination.id)) View.VISIBLE else View.GONE
+                if (canSelectFiles(destination.id)) {
+                    val animation = AnimationUtils.loadAnimation(applicationContext, R.anim.fab_slide_up)
+
+                    viewDataBinding.fabSelectFiles.apply {
+                        startAnimation(animation)
+                        visibility = View.VISIBLE
+                    }
+                } else {
+                    val animation = AnimationUtils.loadAnimation(applicationContext, R.anim.fab_slide_down)
+
+                    viewDataBinding.fabSelectFiles.apply {
+                        startAnimation(animation)
+                        visibility = View.GONE
+                    }
+                }
             }
         }
     }
@@ -38,7 +53,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setUpToolbar() {
-        val appBarConfiguration = AppBarConfiguration(navController.graph)
+//        val appBarConfiguration = AppBarConfiguration(navController.graph)
+        val appBarConfiguration = AppBarConfiguration.Builder(R.id.homeFragment, R.id.selectAvatarFragment)
+            .build()
         viewDataBinding.toolbar.setupWithNavController(navController, appBarConfiguration)
     }
 }

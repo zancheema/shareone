@@ -1,156 +1,180 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".selectavatar.SelectAvatarFragment">
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <ImageView
-        android:id="@+id/ivSelectedAvatar"
-        android:layout_width="@dimen/size_selected_avatar"
-        android:layout_height="@dimen/size_selected_avatar"
-        android:layout_marginTop="16dp"
-        android:src="@drawable/ic_avatar_0"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:tint="?attr/colorOnPrimary" />
+    <data>
 
-    <ImageView
-        android:id="@+id/ivAvatar0"
-        style="@style/AvatarStyle"
-        android:layout_marginHorizontal="8dp"
-        android:layout_marginTop="16dp"
-        android:src="@drawable/ic_avatar_0"
-        app:layout_constraintEnd_toStartOf="@+id/ivAvatar1"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintHorizontal_chainStyle="packed"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvNickname"
-        app:tint="?attr/colorOnPrimary" />
+        <variable
+            name="iconDrawables"
+            type="Integer[]" />
 
-    <ImageView
-        android:id="@+id/ivAvatar1"
-        style="@style/AvatarStyle"
-        android:layout_marginHorizontal="8dp"
-        android:src="@drawable/ic_avatar_1"
-        app:layout_constraintBottom_toBottomOf="@id/ivAvatar0"
-        app:layout_constraintEnd_toStartOf="@+id/ivAvatar2"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/ivAvatar0"
-        app:layout_constraintTop_toTopOf="@id/ivAvatar0" />
+        <variable
+            name="viewmodel"
+            type="com.zancheema.share.android.shareone.selectavatar.SelectAvatarViewModel" />
+    </data>
 
-    <ImageView
-        android:id="@+id/ivAvatar2"
-        style="@style/AvatarStyle"
-        android:layout_marginHorizontal="8dp"
-        android:src="@drawable/ic_avatar_2"
-        app:layout_constraintBottom_toBottomOf="@id/ivAvatar1"
-        app:layout_constraintEnd_toStartOf="@+id/ivAvatar3"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/ivAvatar1"
-        app:layout_constraintTop_toTopOf="@id/ivAvatar1" />
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".selectavatar.SelectAvatarFragment">
 
-    <ImageView
-        android:id="@+id/ivAvatar3"
-        style="@style/AvatarStyle"
-        android:layout_marginHorizontal="8dp"
-        android:src="@drawable/ic_avatar_4"
-        app:layout_constraintBottom_toBottomOf="@id/ivAvatar2"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/ivAvatar2"
-        app:layout_constraintTop_toTopOf="@id/ivAvatar2" />
+        <ImageView
+            android:id="@+id/ivSelectedAvatar"
+            android:layout_width="@dimen/size_selected_avatar"
+            android:layout_height="@dimen/size_selected_avatar"
+            android:layout_marginTop="16dp"
+            android:src="@drawable/ic_avatar_0"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    <ImageView
-        android:id="@+id/ivAvatar4"
-        style="@style/AvatarStyle"
-        android:layout_marginHorizontal="8dp"
-        android:layout_marginTop="16dp"
-        android:src="@drawable/ic_avatar_4"
-        app:layout_constraintEnd_toStartOf="@+id/ivAvatar5"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintHorizontal_chainStyle="packed"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/ivAvatar0"
-        app:layout_goneMarginTop="24dp" />
+        <EditText
+            android:id="@+id/tvNickname"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:hint="@string/nickname"
+            android:text="@={viewmodel.nickname}"
+            android:textAlignment="center"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/ivSelectedAvatar" />
 
-    <ImageView
-        android:id="@+id/ivAvatar5"
-        style="@style/AvatarStyle"
-        android:layout_marginHorizontal="8dp"
-        android:src="@drawable/ic_avatar_5"
-        app:layout_constraintBottom_toBottomOf="@id/ivAvatar4"
-        app:layout_constraintEnd_toStartOf="@+id/ivAvatar6"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/ivAvatar4"
-        app:layout_constraintTop_toTopOf="@id/ivAvatar4" />
+        <ImageView
+            android:id="@+id/ivAvatar0"
+            style="@style/AvatarStyle"
+            android:layout_marginHorizontal="8dp"
+            android:layout_marginTop="16dp"
+            android:onClick="@{() -> viewmodel.setAvatarIcon(iconDrawables[0])}"
+            android:src="@drawable/ic_avatar_0"
+            app:layout_constraintEnd_toStartOf="@+id/ivAvatar1"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvNickname" />
 
-    <ImageView
-        android:id="@+id/ivAvatar6"
-        style="@style/AvatarStyle"
-        android:layout_marginHorizontal="8dp"
-        android:src="@drawable/ic_avatar_6"
-        app:layout_constraintBottom_toBottomOf="@id/ivAvatar5"
-        app:layout_constraintEnd_toStartOf="@+id/ivAvatar7"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/ivAvatar5"
-        app:layout_constraintTop_toTopOf="@id/ivAvatar5" />
+        <ImageView
+            android:id="@+id/ivAvatar1"
+            style="@style/AvatarStyle"
+            android:layout_marginHorizontal="8dp"
+            android:onClick="@{() -> viewmodel.setAvatarIcon(iconDrawables[1])}"
+            android:src="@drawable/ic_avatar_1"
+            app:layout_constraintBottom_toBottomOf="@id/ivAvatar0"
+            app:layout_constraintEnd_toStartOf="@+id/ivAvatar2"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/ivAvatar0"
+            app:layout_constraintTop_toTopOf="@id/ivAvatar0" />
 
-    <ImageView
-        android:id="@+id/ivAvatar7"
-        style="@style/AvatarStyle"
-        android:layout_marginHorizontal="8dp"
-        android:src="@drawable/ic_avatar_7"
-        app:layout_constraintBottom_toBottomOf="@id/ivAvatar5"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/ivAvatar6"
-        app:layout_constraintTop_toTopOf="@id/ivAvatar5" />
+        <ImageView
+            android:id="@+id/ivAvatar2"
+            style="@style/AvatarStyle"
+            android:layout_marginHorizontal="8dp"
+            android:onClick="@{() -> viewmodel.setAvatarIcon(iconDrawables[2])}"
+            android:src="@drawable/ic_avatar_2"
+            app:layout_constraintBottom_toBottomOf="@id/ivAvatar1"
+            app:layout_constraintEnd_toStartOf="@+id/ivAvatar3"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/ivAvatar1"
+            app:layout_constraintTop_toTopOf="@id/ivAvatar1" />
 
-    <ImageView
-        android:id="@+id/ivAvatar8"
-        style="@style/AvatarStyle"
-        android:layout_marginHorizontal="8dp"
-        android:layout_marginTop="24dp"
-        android:src="@drawable/ic_avatar_8"
-        app:layout_constraintEnd_toStartOf="@+id/ivAvatar9"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintHorizontal_chainStyle="packed"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/ivAvatar4" />
+        <ImageView
+            android:id="@+id/ivAvatar3"
+            style="@style/AvatarStyle"
+            android:layout_marginHorizontal="8dp"
+            android:onClick="@{() -> viewmodel.setAvatarIcon(iconDrawables[3])}"
+            android:src="@drawable/ic_avatar_4"
+            app:layout_constraintBottom_toBottomOf="@id/ivAvatar2"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/ivAvatar2"
+            app:layout_constraintTop_toTopOf="@id/ivAvatar2" />
 
-    <ImageView
-        android:id="@+id/ivAvatar9"
-        style="@style/AvatarStyle"
-        android:layout_marginHorizontal="8dp"
-        android:src="@drawable/ic_avatar_9"
-        app:layout_constraintBottom_toBottomOf="@id/ivAvatar8"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/ivAvatar8"
-        app:layout_constraintTop_toTopOf="@id/ivAvatar8" />
+        <ImageView
+            android:id="@+id/ivAvatar4"
+            style="@style/AvatarStyle"
+            android:layout_marginHorizontal="8dp"
+            android:layout_marginTop="16dp"
+            android:onClick="@{() -> viewmodel.setAvatarIcon(iconDrawables[4])}"
+            android:src="@drawable/ic_avatar_4"
+            app:layout_constraintEnd_toStartOf="@+id/ivAvatar5"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/ivAvatar0"
+            app:layout_goneMarginTop="24dp" />
 
-    <androidx.appcompat.widget.AppCompatButton
-        android:layout_width="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:text="@string/next"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        style="@style/ButtonStyleFilled" />
+        <ImageView
+            android:id="@+id/ivAvatar5"
+            style="@style/AvatarStyle"
+            android:layout_marginHorizontal="8dp"
+            android:onClick="@{() -> viewmodel.setAvatarIcon(iconDrawables[5])}"
+            android:src="@drawable/ic_avatar_5"
+            app:layout_constraintBottom_toBottomOf="@id/ivAvatar4"
+            app:layout_constraintEnd_toStartOf="@+id/ivAvatar6"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/ivAvatar4"
+            app:layout_constraintTop_toTopOf="@id/ivAvatar4" />
 
-    <EditText
-        android:id="@+id/tvNickname"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:hint="@string/nickname"
-        android:textAlignment="center"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ivSelectedAvatar" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <ImageView
+            android:id="@+id/ivAvatar6"
+            style="@style/AvatarStyle"
+            android:layout_marginHorizontal="8dp"
+            android:onClick="@{() -> viewmodel.setAvatarIcon(iconDrawables[6])}"
+            android:src="@drawable/ic_avatar_6"
+            app:layout_constraintBottom_toBottomOf="@id/ivAvatar5"
+            app:layout_constraintEnd_toStartOf="@+id/ivAvatar7"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/ivAvatar5"
+            app:layout_constraintTop_toTopOf="@id/ivAvatar5" />
+
+        <ImageView
+            android:id="@+id/ivAvatar7"
+            style="@style/AvatarStyle"
+            android:layout_marginHorizontal="8dp"
+            android:onClick="@{() -> viewmodel.setAvatarIcon(iconDrawables[7])}"
+            android:src="@drawable/ic_avatar_7"
+            app:layout_constraintBottom_toBottomOf="@id/ivAvatar5"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/ivAvatar6"
+            app:layout_constraintTop_toTopOf="@id/ivAvatar5" />
+
+        <ImageView
+            android:id="@+id/ivAvatar8"
+            style="@style/AvatarStyle"
+            android:layout_marginHorizontal="8dp"
+            android:layout_marginTop="24dp"
+            android:onClick="@{() -> viewmodel.setAvatarIcon(iconDrawables[8])}"
+            android:src="@drawable/ic_avatar_8"
+            app:layout_constraintEnd_toStartOf="@+id/ivAvatar9"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/ivAvatar4" />
+
+        <ImageView
+            android:id="@+id/ivAvatar9"
+            style="@style/AvatarStyle"
+            android:layout_marginHorizontal="8dp"
+            android:onClick="@{() -> viewmodel.setAvatarIcon(iconDrawables[9])}"
+            android:src="@drawable/ic_avatar_9"
+            app:layout_constraintBottom_toBottomOf="@id/ivAvatar8"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/ivAvatar8"
+            app:layout_constraintTop_toTopOf="@id/ivAvatar8" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            style="@style/ButtonStyleFilled"
+            android:layout_width="wrap_content"
+            android:onClick="@{() -> viewmodel.saveAvatar()}"
+            android:layout_marginBottom="16dp"
+            android:text="@string/next"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

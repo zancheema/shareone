@@ -3,18 +3,31 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/findSenderFragment">
+    app:startDestination="@id/homeFragment">
 
     <fragment
         android:id="@+id/homeFragment"
         android:name="com.zancheema.share.android.shareone.home.HomeFragment"
         android:label="@string/app_name"
-        tools:layout="@layout/fragment_home" />
+        tools:layout="@layout/fragment_home" >
+        <action
+            android:id="@+id/action_homeFragment_to_selectAvatarFragment"
+            app:destination="@id/selectAvatarFragment"
+            app:popUpTo="@id/nav_graph"
+            app:popUpToInclusive="true" />
+    </fragment>
     <fragment
         android:id="@+id/selectAvatarFragment"
         android:name="com.zancheema.share.android.shareone.selectavatar.SelectAvatarFragment"
         android:label="@string/select_avatar"
-        tools:layout="@layout/fragment_select_avatar" />
+        tools:layout="@layout/fragment_select_avatar" >
+        <action
+            android:id="@+id/action_selectAvatarFragment_to_homeFragment"
+            app:destination="@id/homeFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popUpTo="@id/nav_graph" />
+    </fragment>
     <fragment
         android:id="@+id/prepareReceiveFragment"
         android:name="com.zancheema.share.android.shareone.preparereceive.PrepareReceiveFragment"
