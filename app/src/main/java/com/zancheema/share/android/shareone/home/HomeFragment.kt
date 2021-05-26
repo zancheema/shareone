@@ -7,14 +7,19 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-import com.zancheema.share.android.shareone.data.AppDataSource
 import com.zancheema.share.android.shareone.data.DefaultDataSource
 import com.zancheema.share.android.shareone.databinding.FragmentHomeBinding
+import com.zancheema.share.android.shareone.util.EventObserver
 
 class HomeFragment : Fragment() {
-    private lateinit var dataSource: AppDataSource
     private lateinit var viewDataBinding: FragmentHomeBinding
-    private val viewModel by viewModels<HomeViewModel>()
+    private val viewModel by viewModels<HomeViewModel> {
+        HomeViewModelFactory(
+            DefaultDataSource(
+                requireContext()
+            )
+        )
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -29,13 +34,19 @@ class HomeFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        dataSource = DefaultDataSource(requireContext())
         setUpNavigation()
     }
 
     private fun setUpNavigation() {
-        if (!dataSource.hasAvatar()) {
-            findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToSelectAvatarFragment())
+        val navController = findNavController()
+        if (!viewModel.avatarIsSelected()) {
+            navController.navigate(HomeFragmentDirections.actionHomeFragmentToSelectAvatarFragment())
         }
+        viewModel.prepareSendEvent.observe(viewLifecycleOwner, EventObserver {
+            if (it) navController.navigate(HomeFragmentDirections.actionHomeFragmentToPrepareSendFragment())
+        })
+        viewModel.prepareReceiveEvent.observe(viewLifecycleOwner, EventObserver {
+            if (it) navController.navigate(HomeFragmentDirections.actionHomeFragmentToPrepareReceiveFragment())
+        })
     }
 }

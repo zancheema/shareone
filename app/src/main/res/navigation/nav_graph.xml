@@ -15,6 +15,20 @@
             app:destination="@id/selectAvatarFragment"
             app:popUpTo="@id/nav_graph"
             app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_homeFragment_to_prepareReceiveFragment"
+            app:destination="@id/prepareReceiveFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+        <action
+            android:id="@+id/action_homeFragment_to_prepareSendFragment"
+            app:destination="@id/prepareSendFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
     </fragment>
     <fragment
         android:id="@+id/selectAvatarFragment"
@@ -36,7 +50,7 @@
     <fragment
         android:id="@+id/prepareSendFragment"
         android:name="com.zancheema.share.android.shareone.prepareSend.PrepareSendFragment"
-        android:label="fragment_prepare_send"
+        android:label="@string/app_name"
         tools:layout="@layout/fragment_prepare_send" />
     <fragment
         android:id="@+id/findSenderFragment"
