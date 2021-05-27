@@ -13,4 +13,7 @@
     <string name="open_location">Open Location</string>
     <string name="nickname">Nickname</string>
     <string name="waiting">Waiting… </string>
+    <string name="permissions_not_granted">Permissions not granted</string>
+    <string name="press_and_hold_to_select">Press and hold to select</string>
+    <string name="scanning">Scanning…</string>
 </resources>

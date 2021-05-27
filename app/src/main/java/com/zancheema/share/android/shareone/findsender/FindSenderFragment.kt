@@ -1,15 +1,24 @@
 package com.zancheema.share.android.shareone.findsender
 
+import android.net.Uri
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.zancheema.share.android.shareone.R
+import androidx.fragment.app.Fragment
 import com.zancheema.share.android.shareone.databinding.FragmentFindSenderBinding
 
 class FindSenderFragment : Fragment() {
+
+    private lateinit var uris: Array<Uri>
+
     private lateinit var viewDataBinding: FragmentFindSenderBinding
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        uris = FindSenderFragmentArgs.fromBundle(requireArguments()).uris
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

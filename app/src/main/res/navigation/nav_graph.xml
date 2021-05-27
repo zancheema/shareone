@@ -9,7 +9,7 @@
         android:id="@+id/homeFragment"
         android:name="com.zancheema.share.android.shareone.home.HomeFragment"
         android:label="@string/app_name"
-        tools:layout="@layout/fragment_home" >
+        tools:layout="@layout/fragment_home">
         <action
             android:id="@+id/action_homeFragment_to_selectAvatarFragment"
             app:destination="@id/selectAvatarFragment"
@@ -34,7 +34,7 @@
         android:id="@+id/selectAvatarFragment"
         android:name="com.zancheema.share.android.shareone.selectavatar.SelectAvatarFragment"
         android:label="@string/select_avatar"
-        tools:layout="@layout/fragment_select_avatar" >
+        tools:layout="@layout/fragment_select_avatar">
         <action
             android:id="@+id/action_selectAvatarFragment_to_homeFragment"
             app:destination="@id/homeFragment"
@@ -46,14 +46,42 @@
         android:id="@+id/prepareReceiveFragment"
         android:name="com.zancheema.share.android.shareone.preparereceive.PrepareReceiveFragment"
         android:label="@string/app_name"
-        tools:layout="@layout/fragment_prepare_receive" />
+        tools:layout="@layout/fragment_prepare_receive">
+        <action
+            android:id="@+id/action_prepareReceiveFragment_to_findReceiverFragment"
+            app:destination="@id/findReceiverFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+    </fragment>
     <fragment
         android:id="@+id/prepareSendFragment"
-        android:name="com.zancheema.share.android.shareone.prepareSend.PrepareSendFragment"
+        android:name="com.zancheema.share.android.shareone.preparesend.PrepareSendFragment"
         android:label="@string/app_name"
-        tools:layout="@layout/fragment_prepare_send" />
+        tools:layout="@layout/fragment_prepare_send">
+        <action
+            android:id="@+id/action_prepareSendFragment_to_findSenderFragment"
+            app:destination="@id/findSenderFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+        <argument
+            android:name="uris"
+            app:argType="android.net.Uri[]" />
+    </fragment>
     <fragment
         android:id="@+id/findSenderFragment"
         android:name="com.zancheema.share.android.shareone.findsender.FindSenderFragment"
-        android:label="@string/waiting" />
+        android:label="@string/waiting">
+        <argument
+            android:name="uris"
+            app:argType="android.net.Uri[]" />
+    </fragment>
+    <fragment
+        android:id="@+id/findReceiverFragment"
+        android:name="com.zancheema.share.android.shareone.findreceiver.FindReceiverFragment"
+        android:label="@string/scanning"
+        tools:layout="@layout/fragment_find_receiver" />
 </navigation>

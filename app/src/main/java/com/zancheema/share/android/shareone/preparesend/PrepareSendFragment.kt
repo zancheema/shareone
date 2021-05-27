@@ -1,4 +1,4 @@
-package com.zancheema.share.android.shareone.preparereceive
+package com.zancheema.share.android.shareone.preparesend
 
 import android.Manifest
 import android.annotation.SuppressLint
@@ -9,14 +9,17 @@ import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.content.res.ColorStateList
 import android.location.LocationManager
+import android.net.Uri
 import android.net.wifi.p2p.WifiP2pManager
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
+import android.provider.Settings.SettingNotFoundException
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.activity.result.contract.ActivityResultContracts.RequestMultiplePermissions
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -24,16 +27,21 @@ import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
 import com.zancheema.share.android.shareone.R
 import com.zancheema.share.android.shareone.broadcast.WiFiStatusBroadcastReceiver
-import com.zancheema.share.android.shareone.databinding.FragmentPrepareReceiveBinding
+import com.zancheema.share.android.shareone.databinding.FragmentPrepareSendBinding
 import com.zancheema.share.android.shareone.util.EventObserver
 
-class PrepareReceiveFragment : Fragment() {
+private const val TAG = "PrepareSendFragment"
+
+class PrepareSendFragment : Fragment() {
+
+    private lateinit var uris: Array<Uri>
+
     private val permissions = arrayOf(
         Manifest.permission.ACCESS_FINE_LOCATION
     )
-
     private val requestMultiplePermissions =
-        registerForActivityResult(RequestMultiplePermissions()) { permissions ->
+        registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
+            Log.d(TAG, "permissions: $permissions")
             if (permissions.values.all { it }) {
                 startProcessing()
             } else {
@@ -43,16 +51,22 @@ class PrepareReceiveFragment : Fragment() {
             }
         }
 
-    private val viewModel by viewModels<PrepareReceiveViewModel>()
-    private lateinit var viewDataBinding: FragmentPrepareReceiveBinding
+    private val viewModel by viewModels<PrepareSendViewModel>()
+    private lateinit var viewDataBinding: FragmentPrepareSendBinding
     private lateinit var broadcastReceiver: BroadcastReceiver
     private lateinit var intentFilter: IntentFilter
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        uris = PrepareSendFragmentArgs.fromBundle(requireArguments()).uris
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        viewDataBinding = FragmentPrepareReceiveBinding.inflate(inflater, container, false)
+        viewDataBinding = FragmentPrepareSendBinding.inflate(inflater, container, false)
             .apply { viewmodel = viewModel }
         return viewDataBinding.root
     }
@@ -105,7 +119,11 @@ class PrepareReceiveFragment : Fragment() {
             if (it) startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
         })
         viewModel.proceedEvent.observe(viewLifecycleOwner, EventObserver {
-            findNavController().navigate(PrepareReceiveFragmentDirections.actionPrepareReceiveFragmentToFindReceiverFragment())
+            findNavController().navigate(
+                PrepareSendFragmentDirections.actionPrepareSendFragmentToFindSenderFragment(
+                    uris
+                )
+            )
         })
     }
 
@@ -150,7 +168,7 @@ class PrepareReceiveFragment : Fragment() {
         try {
             locationMode =
                 Settings.Secure.getInt(context.contentResolver, Settings.Secure.LOCATION_MODE)
-        } catch (e: Settings.SettingNotFoundException) {
+        } catch (e: SettingNotFoundException) {
             e.printStackTrace()
         }
         return locationMode != Settings.Secure.LOCATION_MODE_OFF
