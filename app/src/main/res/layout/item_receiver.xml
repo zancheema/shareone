@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="device"
+            type="android.net.wifi.p2p.WifiP2pDevice" />
+
+        <variable
+            name="viewmodel"
+            type="com.zancheema.share.android.shareone.findreceiver.FindReceiverViewModel" />
+    </data>
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="@{() -> viewmodel.selectDevice(device)}"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="8dp"
+            android:text="@{device.deviceName}"
+            tools:text="@tools:sample/full_names" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/height_divider"
+            android:background="@color/divider" />
+    </androidx.appcompat.widget.LinearLayoutCompat>
+</layout>

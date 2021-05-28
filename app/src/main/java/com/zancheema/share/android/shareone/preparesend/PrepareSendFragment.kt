@@ -120,7 +120,7 @@ class PrepareSendFragment : Fragment() {
         })
         viewModel.proceedEvent.observe(viewLifecycleOwner, EventObserver {
             findNavController().navigate(
-                PrepareSendFragmentDirections.actionPrepareSendFragmentToFindSenderFragment(
+                PrepareSendFragmentDirections.actionPrepareSendFragmentToFindReceiverFragment(
                     uris
                 )
             )

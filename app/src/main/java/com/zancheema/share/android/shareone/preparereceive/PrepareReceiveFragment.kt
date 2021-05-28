@@ -105,7 +105,7 @@ class PrepareReceiveFragment : Fragment() {
             if (it) startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
         })
         viewModel.proceedEvent.observe(viewLifecycleOwner, EventObserver {
-            findNavController().navigate(PrepareReceiveFragmentDirections.actionPrepareReceiveFragmentToFindReceiverFragment())
+            findNavController().navigate(PrepareReceiveFragmentDirections.actionPrepareReceiveFragmentToFindSenderFragment())
         })
     }
 
