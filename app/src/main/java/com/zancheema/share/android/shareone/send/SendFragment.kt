@@ -6,8 +6,21 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.zancheema.share.android.shareone.R
+import com.zancheema.share.android.shareone.receive.ReceiveFragmentArgs
 
 class SendFragment : Fragment() {
+
+    // Parameters
+    private var isGroupOwner: Boolean = false
+    private var groupOwnerAddress: String? = null
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        val args = ReceiveFragmentArgs.fromBundle(requireArguments())
+        isGroupOwner = args.isGroupOwner
+        groupOwnerAddress = args.groupOwnerAddress
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

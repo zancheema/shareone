@@ -74,7 +74,11 @@
     <fragment
         android:id="@+id/findSenderFragment"
         android:name="com.zancheema.share.android.shareone.findsender.FindSenderFragment"
-        android:label="@string/waiting"/>
+        android:label="@string/waiting">
+        <action
+            android:id="@+id/action_findSenderFragment_to_receiveFragment"
+            app:destination="@id/receiveFragment" />
+    </fragment>
     <fragment
         android:id="@+id/findReceiverFragment"
         android:name="com.zancheema.share.android.shareone.findreceiver.FindReceiverFragment"
@@ -83,5 +87,34 @@
         <argument
             android:name="uris"
             app:argType="android.net.Uri[]" />
+        <action
+            android:id="@+id/action_findReceiverFragment_to_sendFragment"
+            app:destination="@id/sendFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/receiveFragment"
+        android:name="com.zancheema.share.android.shareone.receive.ReceiveFragment"
+        android:label="fragment_receive"
+        tools:layout="@layout/fragment_receive" >
+        <argument
+            android:name="isGroupOwner"
+            app:argType="boolean" />
+        <argument
+            android:name="groupOwnerAddress"
+            app:argType="string"
+            app:nullable="true" />
+    </fragment>
+    <fragment
+        android:id="@+id/sendFragment"
+        android:name="com.zancheema.share.android.shareone.send.SendFragment"
+        android:label="fragment_send"
+        tools:layout="@layout/fragment_send" >
+        <argument
+            android:name="isGroupOwner"
+            app:argType="boolean" />
+        <argument
+            android:name="groupOwnerAddress"
+            app:argType="string"
+            app:nullable="true" />
     </fragment>
 </navigation>

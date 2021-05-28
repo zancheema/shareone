@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="share"
+            type="com.zancheema.share.android.shareone.common.LiveShare" />
+    </data>
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="@dimen/card_margin_vertical_normal">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/ivThumbnail"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:src="@drawable/ic_outline_insert_drive_file_24"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/tvName"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="@{share.name}"
+                app:layout_constraintBottom_toTopOf="@+id/pbTransfer"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/ivThumbnail"
+                app:layout_constraintTop_toTopOf="@+id/ivThumbnail" />
+
+            <ProgressBar
+                android:id="@+id/pbTransfer"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:progress="@{share.progress}"
+                android:progressTint="@color/blue"
+                app:layout_constraintBottom_toTopOf="@+id/tvTransfer"
+                app:layout_constraintStart_toStartOf="@+id/tvName"
+                app:layout_constraintTop_toBottomOf="@+id/tvName"
+                tools:progress="@integer/sample_progress" />
+
+            <TextView
+                android:id="@+id/tvTransfer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@{share.transferredBytes}"
+                android:textColor="@{share.isComplete ? @color/color_on_primary : @color/blue}"
+                app:layout_constraintBottom_toBottomOf="@+id/ivThumbnail"
+                app:layout_constraintStart_toStartOf="@+id/pbTransfer"
+                app:layout_constraintTop_toBottomOf="@+id/pbTransfer"
+                tools:text="@string/data_transferred_tools" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
+</layout>

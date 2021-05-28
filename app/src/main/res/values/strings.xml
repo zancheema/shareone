@@ -16,4 +16,10 @@
     <string name="permissions_not_granted">Permissions not granted</string>
     <string name="press_and_hold_to_select">Press and hold to select</string>
     <string name="scanning">Scanning…</string>
+    <string name="bytes_transferred">%s / %s</string>
+    <string name="data_transferred_tools">74.2 MB / 92.4 MB</string>
+    <string name="format_size_bytes">%.0f B</string>
+    <string name="format_size_kb">%.1f KB</string>
+    <string name="format_size_mb">%.1f MB</string>
+    <string name="format_size_gb">%.1f GB</string>
 </resources>

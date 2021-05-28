@@ -4,6 +4,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,6 +21,8 @@ import com.zancheema.share.android.shareone.data.DefaultDataSource
 import com.zancheema.share.android.shareone.databinding.FragmentHomeBinding
 import com.zancheema.share.android.shareone.util.EventObserver
 
+private const val TAG = "HomeFragment"
+
 class HomeFragment : Fragment() {
 
     private val prepareSendPermissions =
@@ -27,6 +30,7 @@ class HomeFragment : Fragment() {
 
     private val selectFilesIntent: Intent = Intent(Intent.ACTION_GET_CONTENT).apply {
         putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
+        addCategory(Intent.CATEGORY_OPENABLE)
         type = "*/*"
     }
 
@@ -47,6 +51,7 @@ class HomeFragment : Fragment() {
         registerForActivityResult(StartActivityForResult()) { result ->
             result?.data?.clipData?.let { clipData ->
                 val uris = Array<Uri>(clipData.itemCount) { index ->
+                    Log.d(TAG, "uris[$index]: ${clipData.getItemAt(index).uri}")
                     clipData.getItemAt(index).uri
                 }
                 findNavController().navigate(

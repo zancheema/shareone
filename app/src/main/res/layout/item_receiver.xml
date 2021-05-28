@@ -13,22 +13,23 @@
             type="com.zancheema.share.android.shareone.findreceiver.FindReceiverViewModel" />
     </data>
 
-    <androidx.appcompat.widget.LinearLayoutCompat
+    <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:onClick="@{() -> viewmodel.selectDevice(device)}"
-        android:orientation="vertical">
+        android:layout_marginVertical="@dimen/card_margin_vertical_normal"
+        android:onClick="@{() -> viewmodel.selectDevice(device)}">
 
-        <TextView
+        <androidx.appcompat.widget.LinearLayoutCompat
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="8dp"
-            android:text="@{device.deviceName}"
-            tools:text="@tools:sample/full_names" />
+            android:orientation="vertical"
+            android:padding="8dp">
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/height_divider"
-            android:background="@color/divider" />
-    </androidx.appcompat.widget.LinearLayoutCompat>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@{device.deviceName}"
+                tools:text="@tools:sample/full_names" />
+        </androidx.appcompat.widget.LinearLayoutCompat>
+    </androidx.cardview.widget.CardView>
 </layout>
