@@ -61,8 +61,8 @@
         android:label="@string/app_name"
         tools:layout="@layout/fragment_prepare_send">
         <argument
-            android:name="uris"
-            app:argType="android.net.Uri[]" />
+            android:name="shareables"
+            app:argType="com.zancheema.share.android.shareone.common.Shareable[]" />
         <action
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
@@ -85,8 +85,8 @@
         android:label="@string/scanning"
         tools:layout="@layout/fragment_find_receiver" >
         <argument
-            android:name="uris"
-            app:argType="android.net.Uri[]" />
+            android:name="shareables"
+            app:argType="com.zancheema.share.android.shareone.common.Shareable[]" />
         <action
             android:id="@+id/action_findReceiverFragment_to_sendFragment"
             app:destination="@id/sendFragment" />
@@ -116,5 +116,8 @@
             android:name="groupOwnerAddress"
             app:argType="string"
             app:nullable="true" />
+        <argument
+            android:name="shareables"
+            app:argType="com.zancheema.share.android.shareone.common.Shareable[]" />
     </fragment>
 </navigation>

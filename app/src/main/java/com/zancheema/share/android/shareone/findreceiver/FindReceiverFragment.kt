@@ -19,13 +19,14 @@ import androidx.fragment.app.viewModels
 import com.zancheema.share.android.shareone.broadcast.WiFiDirectBroadcastReceiver
 import com.zancheema.share.android.shareone.broadcast.WiFiDirectConnectionStatus
 import com.zancheema.share.android.shareone.broadcast.WifiDirectListener
+import com.zancheema.share.android.shareone.common.Shareable
 import com.zancheema.share.android.shareone.databinding.FragmentFindReceiverBinding
 
 private const val TAG = "FindReceiverFragment"
 
 class FindReceiverFragment : Fragment(), WifiDirectListener {
 
-    private lateinit var uris: Array<Uri>
+    private lateinit var shareables: Array<Shareable>
 
     private val viewModel by viewModels<FindReceiverViewModel>()
     private lateinit var viewDataBinding: FragmentFindReceiverBinding
@@ -37,7 +38,11 @@ class FindReceiverFragment : Fragment(), WifiDirectListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        uris = FindReceiverFragmentArgs.fromBundle(requireArguments()).uris
+        shareables = FindReceiverFragmentArgs.fromBundle(requireArguments()).shareables
+        for (index in shareables.indices) Log.d(
+            TAG,
+            "onCreate: shareables[$index]: $${shareables[index]}"
+        )
     }
 
     override fun onCreateView(

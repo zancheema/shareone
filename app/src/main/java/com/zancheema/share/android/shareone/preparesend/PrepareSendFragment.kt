@@ -9,7 +9,6 @@ import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.content.res.ColorStateList
 import android.location.LocationManager
-import android.net.Uri
 import android.net.wifi.p2p.WifiP2pManager
 import android.os.Build
 import android.os.Bundle
@@ -27,6 +26,7 @@ import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
 import com.zancheema.share.android.shareone.R
 import com.zancheema.share.android.shareone.broadcast.WiFiStatusBroadcastReceiver
+import com.zancheema.share.android.shareone.common.Shareable
 import com.zancheema.share.android.shareone.databinding.FragmentPrepareSendBinding
 import com.zancheema.share.android.shareone.util.EventObserver
 
@@ -34,7 +34,7 @@ private const val TAG = "PrepareSendFragment"
 
 class PrepareSendFragment : Fragment() {
 
-    private lateinit var uris: Array<Uri>
+    private lateinit var shareables: Array<Shareable>
 
     private val permissions = arrayOf(
         Manifest.permission.ACCESS_FINE_LOCATION
@@ -59,7 +59,7 @@ class PrepareSendFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        uris = PrepareSendFragmentArgs.fromBundle(requireArguments()).uris
+        shareables = PrepareSendFragmentArgs.fromBundle(requireArguments()).shareables
     }
 
     override fun onCreateView(
@@ -121,7 +121,7 @@ class PrepareSendFragment : Fragment() {
         viewModel.proceedEvent.observe(viewLifecycleOwner, EventObserver {
             findNavController().navigate(
                 PrepareSendFragmentDirections.actionPrepareSendFragmentToFindReceiverFragment(
-                    uris
+                    shareables
                 )
             )
         })
