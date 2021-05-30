@@ -1,12 +1,12 @@
 package com.zancheema.share.android.shareone.common.share
 
+import android.app.Activity
 import android.content.Context
-import androidx.recyclerview.widget.ListAdapter
-import androidx.recyclerview.widget.RecyclerView
+import android.util.Log
 import com.zancheema.share.android.shareone.R
-import com.zancheema.share.android.shareone.databinding.ItemShareBinding
-import kotlinx.parcelize.Parcelize
 import java.nio.ByteBuffer
+
+private const val TAG = "ShareUtil"
 
 fun Context.getFormattedFileSize(size: Long): String {
     val gbLimit = Math.pow(1024.0, 3.0)
@@ -32,12 +32,39 @@ fun Long.getBytes(): ByteArray {
     return buffer.array()
 }
 
-fun ByteArray.getLong(): Long {
+fun ByteArray.toLong(): Long {
     val wrapped = ByteBuffer.wrap(this)
     return wrapped.long
 }
 
-fun ByteArray.getInt(): Int {
+fun ByteArray.toInt(): Int {
     val wrapped = ByteBuffer.wrap(this)
     return wrapped.int
 }
+
+fun Activity.getMediaPath(mediaName: String): String {
+    val baseDir = externalMediaDirs[0].toString() + "/"
+    Log.d(TAG, "getMediaPath: baseDir: $baseDir")
+
+    val subDir = when {
+        mediaName.isImageName() -> "Images/"
+        mediaName.isAudioName() -> "Audios/"
+        mediaName.isVideoName() -> "Videos/"
+        mediaName.isAPKName() -> "APKs/"
+        else -> "Files/"
+    }
+
+    return baseDir + subDir + mediaName
+}
+
+fun String.isImageName(): Boolean = lowercase().run {
+    endsWith(".jpg") || endsWith(".jpeg") || endsWith(".png")
+}
+
+fun String.isAudioName(): Boolean = lowercase().endsWith(".mp3")
+
+fun String.isVideoName(): Boolean = lowercase().run {
+    endsWith(".mp4") || endsWith(".mkv")
+}
+
+fun String.isAPKName(): Boolean = lowercase().endsWith(".apk")

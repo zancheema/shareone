@@ -15,10 +15,9 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.zancheema.share.android.shareone.R
-import com.zancheema.share.android.shareone.common.share.Shareable
-import com.zancheema.share.android.shareone.common.share.getBytes
-import com.zancheema.share.android.shareone.common.share.getInt
+import com.zancheema.share.android.shareone.common.share.*
 import com.zancheema.share.android.shareone.data.DefaultDataSource
+import com.zancheema.share.android.shareone.databinding.FragmentSendBinding
 import com.zancheema.share.android.shareone.home.HomeFragmentDirections
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -37,6 +36,7 @@ class SendFragment : Fragment() {
     private val viewModel by viewModels<SendViewModel> {
         SendViewModelFactory(DefaultDataSource(requireContext().applicationContext))
     }
+    private lateinit var viewDataBinding: FragmentSendBinding
 
     // Parameters
     private var isGroupOwner: Boolean = false
@@ -59,14 +59,14 @@ class SendFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_send, container, false)
+    ): View {
+        viewDataBinding = FragmentSendBinding.inflate(inflater, container, false)
+        return viewDataBinding.root
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-
+        viewDataBinding.lifecycleOwner = viewLifecycleOwner
         initialize()
         connector = ConnectorFactory().create()
         coroutineScope.launch {
@@ -75,6 +75,12 @@ class SendFragment : Fragment() {
     }
 
     private fun initialize() {
+        val listAdapter = LiveShareListAdapter(viewLifecycleOwner)
+        viewDataBinding.rcShareList.adapter = listAdapter
+        viewModel.shares.observe(viewLifecycleOwner) { shares ->
+            listAdapter.submitList(shares)
+        }
+
         requireActivity().onBackPressedDispatcher.addCallback(object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 closeConnection()
@@ -109,7 +115,7 @@ class SendFragment : Fragment() {
 
         override suspend fun connect() {
             serverSocket = ServerSocket(8888)
-                .apply { soTimeout = 1000 } // throwing poll timeout error here
+//                .apply { soTimeout = 1000 } // throwing poll timeout error here
             Log.d(TAG, "connect: server accepting...")
             val socket = serverSocket.accept()
             Log.d(TAG, "connect: accepted")
@@ -142,7 +148,7 @@ class SendFragment : Fragment() {
                 // Read name length
                 var buffer = ByteArray(Int.SIZE_BYTES)
                 inputStream.read(buffer)
-                val length = buffer.getInt()
+                val length = buffer.toInt()
                 // Read name string
                 buffer = ByteArray(length)
                 inputStream.read(buffer)
@@ -154,12 +160,51 @@ class SendFragment : Fragment() {
                 }
 
                 // Write the sender name
+                // 1. Write character length
                 name = viewModel.nickname
                 buffer = name.length.getBytes()
                 outputStream.write(buffer, 0, Int.SIZE_BYTES)
-                // 1. Write the sender name length
+                // 1. Write name
                 buffer = name.toByteArray()
                 outputStream.write(buffer)
+
+                // Write no. of files
+                val noOfFiles = shareables.size.getBytes()
+                outputStream.write(noOfFiles, 0, Int.SIZE_BYTES)
+
+                // Write all files sequentially
+                for (shareable in shareables) {
+                    // Write name of shareable
+                    // 1. Write size of name
+                    name = shareable.name
+                    buffer = name.length.getBytes()
+                    outputStream.write(buffer, 0, Int.SIZE_BYTES)
+                    // 2. Write name
+                    buffer = name.toByteArray()
+                    outputStream.write(buffer)
+
+                    // Write size of file
+                    buffer = shareable.size.getBytes()
+                    outputStream.write(buffer)
+
+                    // Write the shareable
+                    val liveShare =
+                        LiveShare(requireContext(), shareable.name, shareable.uri, shareable.size)
+                    withContext(Dispatchers.Main) { viewModel.addShare(liveShare) }
+                    buffer = ByteArray(1024)
+                    val contentResolver = requireContext().contentResolver
+                    val contentInputStream = contentResolver.openInputStream(liveShare.uri)
+                    var bytes = 0
+                    var transferredBytes = 0L
+                    while ((contentInputStream?.read(buffer)!!.also { bytes = it }) != -1) {
+                        outputStream.write(buffer, 0, bytes)
+
+                        // Update Live Share
+                        transferredBytes += bytes
+                        withContext(Dispatchers.IO) { liveShare.update(transferredBytes) }
+                    }
+//                    liveShare.complete()
+                }
 
                 Log.d(TAG, "send: successful")
             } catch (e: IOException) {

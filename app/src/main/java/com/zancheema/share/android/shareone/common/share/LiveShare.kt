@@ -5,11 +5,12 @@ import android.net.Uri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.zancheema.share.android.shareone.R
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 data class LiveShare(
     private val context: Context,
     val name: String,
-    val size: Long,
     val uri: Uri,
     val total: Long,
     val progress: MutableLiveData<Int> = MutableLiveData(0)
@@ -24,23 +25,28 @@ data class LiveShare(
     val transferredBytes: LiveData<String>
         get() = _transferredBytes
 
-    fun update(bytes: Long) {
+    suspend fun update(bytes: Long) {
         val trans = context.getFormattedFileSize(bytes)
-        _transferredBytes.value = context.getString(R.string.bytes_transferred, trans, totalBytes)
+        val transferredRatio = context.getString(R.string.bytes_transferred, trans, totalBytes)
+        if (transferredRatio != _transferredBytes.value) {
+            _transferredBytes.postValue(transferredRatio)
+        }
 
         // Update progress
-        val newProgress = ((bytes / total) * 100).toInt()
+        val newProgress = ((bytes * 100) / total).toInt()
         if (newProgress > progress.value!!) {
-            progress.value = newProgress
+            progress.postValue(newProgress)
         }
 
         // complete transfer if required
         if (bytes >= total) complete()
     }
 
-    fun complete() {
-        transferredBytes
-        progress.value = 100
-        _isComplete.value = true
+    private suspend fun complete() {
+        withContext(Dispatchers.Main) {
+            _transferredBytes.value = totalBytes
+            progress.value = 100
+            _isComplete.value = true
+        }
     }
 }

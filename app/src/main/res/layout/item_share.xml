@@ -58,7 +58,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@{share.transferredBytes}"
-                android:textColor="@{share.isComplete ? @color/color_on_primary : @color/blue}"
+                android:textColor="@{share.isComplete ? @color/blue : @color/color_on_primary}"
                 app:layout_constraintBottom_toBottomOf="@+id/ivThumbnail"
                 app:layout_constraintStart_toStartOf="@+id/pbTransfer"
                 app:layout_constraintTop_toBottomOf="@+id/pbTransfer"

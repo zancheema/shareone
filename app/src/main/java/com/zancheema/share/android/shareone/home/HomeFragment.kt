@@ -11,7 +11,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.activity.result.contract.ActivityResultContracts.RequestMultiplePermissions
 import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
@@ -28,7 +27,7 @@ private const val TAG = "HomeFragment"
 class HomeFragment : Fragment() {
 
     private val selectFilesIntent: Intent = Intent(Intent.ACTION_GET_CONTENT).apply {
-//        putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
+        putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
         addCategory(Intent.CATEGORY_OPENABLE)
         type = "*/*"
     }
@@ -50,20 +49,20 @@ class HomeFragment : Fragment() {
                 )
             } else if (result.data!!.clipData != null) {
                 val clipData = result.data!!.clipData!!
-                    val shareables = Array(clipData.itemCount) { index ->
-                        val uri = clipData.getItemAt(index).uri
-                        val (name, size) = getMetadata(uri)
-                        Shareable(name, size, uri)
-                    }
-                    for (index in shareables.indices) Log.d(
-                        TAG,
-                        "shareables[$index]: ${shareables[index]}"
+                val shareables = Array(clipData.itemCount) { index ->
+                    val uri = clipData.getItemAt(index).uri
+                    val (name, size) = getMetadata(uri)
+                    Shareable(name, size, uri)
+                }
+                for (index in shareables.indices) Log.d(
+                    TAG,
+                    "shareables[$index]: ${shareables[index]}"
+                )
+                findNavController().navigate(
+                    HomeFragmentDirections.actionHomeFragmentToPrepareSendFragment(
+                        shareables
                     )
-                    findNavController().navigate(
-                        HomeFragmentDirections.actionHomeFragmentToPrepareSendFragment(
-                            shareables
-                        )
-                    )
+                )
             }
         }
 

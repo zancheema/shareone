@@ -1,6 +1,7 @@
 package com.zancheema.share.android.shareone.receive
 
 import android.content.Context
+import android.net.Uri
 import android.net.wifi.p2p.WifiP2pConfig
 import android.net.wifi.p2p.WifiP2pManager
 import android.os.Bundle
@@ -15,15 +16,18 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.zancheema.share.android.shareone.R
-import com.zancheema.share.android.shareone.common.share.getBytes
-import com.zancheema.share.android.shareone.common.share.getInt
+import com.zancheema.share.android.shareone.common.share.*
 import com.zancheema.share.android.shareone.data.DefaultDataSource
+import com.zancheema.share.android.shareone.databinding.FragmentReceiveBinding
 import com.zancheema.share.android.shareone.home.HomeFragmentDirections
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.io.File
+import java.io.FileOutputStream
 import java.io.IOException
+import java.io.InputStream
 import java.net.InetSocketAddress
 import java.net.ServerSocket
 import java.net.Socket
@@ -36,6 +40,7 @@ class ReceiveFragment : Fragment() {
     private val viewModel by viewModels<ReceiveViewModel> {
         ReceiverViewModelFactory(DefaultDataSource(requireContext().applicationContext))
     }
+    private lateinit var viewDataBinding: FragmentReceiveBinding
 
     // Parameters
     private var isGroupOwner: Boolean = false
@@ -56,14 +61,14 @@ class ReceiveFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_receive, container, false)
+    ): View {
+        viewDataBinding = FragmentReceiveBinding.inflate(inflater, container, false)
+        return viewDataBinding.root
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-
+        viewDataBinding.lifecycleOwner = viewLifecycleOwner
         initialize()
         connector = ConnectorFactory().create()
         coroutineScope.launch {
@@ -72,6 +77,12 @@ class ReceiveFragment : Fragment() {
     }
 
     private fun initialize() {
+        val listAdapter = LiveShareListAdapter(viewLifecycleOwner)
+        viewDataBinding.rcShareList.adapter = listAdapter
+        viewModel.shares.observe(viewLifecycleOwner) { shares ->
+            listAdapter.submitList(shares)
+        }
+
         requireActivity().onBackPressedDispatcher.addCallback(object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 closeConnection()
@@ -106,7 +117,7 @@ class ReceiveFragment : Fragment() {
 
         override suspend fun connect() {
             serverSocket = ServerSocket(8888)
-                .apply { soTimeout = 1000 } // throwing poll timeout error here
+//                .apply { soTimeout = 1000 } // throwing poll timeout error here
             Log.d(TAG, "connect: server accepting...")
             val socket = serverSocket.accept()
             Log.d(TAG, "connect: accepted")
@@ -144,7 +155,7 @@ class ReceiveFragment : Fragment() {
                 // Read name length
                 buffer = ByteArray(Int.SIZE_BYTES)
                 inputStream.read(buffer)
-                val length = buffer.getInt()
+                var length = buffer.toInt()
                 // Read name string
                 buffer = ByteArray(length)
                 inputStream.read(buffer)
@@ -154,10 +165,86 @@ class ReceiveFragment : Fragment() {
                     val toolbar = requireActivity().findViewById<Toolbar>(R.id.toolbar)
                     toolbar.title = resources.getString(R.string.receiving_from, name)
                 }
+
+                // Read no. of files
+                buffer = ByteArray(Int.SIZE_BYTES)
+                inputStream.read(buffer)
+                val noOfFiles = buffer.toInt()
+                Log.d(TAG, "receive: noOfFiles: $noOfFiles")
+
+                // Read files sequentially
+                for (index in 0 until noOfFiles) {
+                    // Read name of file
+                    // Read name length
+                    buffer = ByteArray(Int.SIZE_BYTES)
+                    inputStream.read(buffer)
+                    length = buffer.toInt()
+                    // Read name string
+                    buffer = ByteArray(length)
+                    inputStream.read(buffer)
+                    name = String(buffer)
+
+                    // Read size of file
+                    buffer = ByteArray(Long.SIZE_BYTES)
+                    inputStream.read(buffer)
+                    val size = buffer.toLong()
+                    Log.d(TAG, "receive: size[$index]: $size")
+
+                    val path = requireActivity().getMediaPath(name)
+                    val f = File(path)
+
+                    Log.d(TAG, "receive: creating dirs")
+                    val dirs = File(f.parent)
+                    if (!dirs.exists()) dirs.mkdirs()
+                    f.createNewFile()
+                    Log.d(TAG, "receive: dir created")
+
+                    val share = LiveShare(requireContext(), name, Uri.parse(path), size)
+                    withContext(Dispatchers.Main) { viewModel.addShare(share) }
+
+                    Log.d(TAG, "receive: name[$index]: $name")
+                    Log.d(TAG, "receive: size[$index]: $size")
+                    val transferredBytes = copyFile(inputStream, FileOutputStream(f), size, share)
+//                    if (transferredBytes == size) share.complete()
+//                    share.complete()
+                    Log.d(TAG, "receive: copied[$index]")
+                }
+
+                Log.d(TAG, "receive: successful")
             } catch (e: IOException) {
                 e.printStackTrace()
                 Log.e(TAG, "receive: ", e)
             }
+        }
+
+        private suspend fun copyFile(
+            inputStream: InputStream,
+            outputStream: FileOutputStream,
+            totalBytes: Long,
+            share: LiveShare
+        ): Long {
+            var transferredBytes = 0L
+            val buffer = ByteArray(1024)
+
+            while (transferredBytes < totalBytes) {
+                try {
+                    val bytes = inputStream.read(
+                        buffer,
+                        0,
+                        buffer.size.toLong().coerceAtMost(totalBytes - transferredBytes).toInt()
+                    )
+                    if (bytes == -1) break
+                    outputStream.write(buffer, 0, bytes)
+
+                    transferredBytes += bytes
+                    withContext(Dispatchers.IO) { share.update(transferredBytes) }
+                } catch (e: IOException) {
+                    e.printStackTrace()
+                    Log.e(TAG, "copyFile: ", e)
+                    return transferredBytes
+                }
+            }
+            return transferredBytes
         }
     }
 
