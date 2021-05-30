@@ -22,4 +22,8 @@
     <string name="format_size_kb">%.1f KB</string>
     <string name="format_size_mb">%.1f MB</string>
     <string name="format_size_gb">%.1f GB</string>
+    <string name="sending_to">Sending to %s</string>
+    <string name="receiving_from">Receiving from %s</string>
+    <string name="receiving">Receiving...</string>
+    <string name="sending">Sending...</string>
 </resources>

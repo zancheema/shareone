@@ -10,25 +10,33 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
+import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.zancheema.share.android.shareone.R
 import com.zancheema.share.android.shareone.common.share.Shareable
+import com.zancheema.share.android.shareone.common.share.getBytes
+import com.zancheema.share.android.shareone.common.share.getInt
+import com.zancheema.share.android.shareone.data.DefaultDataSource
 import com.zancheema.share.android.shareone.home.HomeFragmentDirections
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.IOException
 import java.net.InetSocketAddress
 import java.net.ServerSocket
 import java.net.Socket
-import java.nio.ByteBuffer
 
 private const val TAG = "SendFragment"
 
 class SendFragment : Fragment() {
 
     private val coroutineScope = CoroutineScope(Dispatchers.IO)
+    private val viewModel by viewModels<SendViewModel> {
+        SendViewModelFactory(DefaultDataSource(requireContext().applicationContext))
+    }
 
     // Parameters
     private var isGroupOwner: Boolean = false
@@ -89,6 +97,7 @@ class SendFragment : Fragment() {
             Log.d(TAG, "connect: client")
             socket.connect(InetSocketAddress(hostAdd, 8888), 1000)
             sender = Sender(socket, shareables)
+            sender.send()
         }
 
         override fun disconnect() {
@@ -105,6 +114,7 @@ class SendFragment : Fragment() {
             val socket = serverSocket.accept()
             Log.d(TAG, "connect: accepted")
             sender = Sender(socket, shareables)
+            sender.send()
         }
 
         override fun disconnect() {
@@ -124,31 +134,39 @@ class SendFragment : Fragment() {
     ) {
 
         private val outputStream = socket.getOutputStream()
+        private val inputStream = socket.getInputStream()
 
-        fun send() {
+        suspend fun send() {
             try {
+                // Read Receiver name
+                // Read name length
+                var buffer = ByteArray(Int.SIZE_BYTES)
+                inputStream.read(buffer)
+                val length = buffer.getInt()
+                // Read name string
+                buffer = ByteArray(length)
+                inputStream.read(buffer)
+                var name = String(buffer)
+                Log.d(TAG, "receive: name: $name")
+                withContext(Dispatchers.Main) {
+                    val toolbar = requireActivity().findViewById<Toolbar>(R.id.toolbar)
+                    toolbar.title = resources.getString(R.string.sending_to, name)
+                }
+
                 // Write the sender name
-//                val senderName =
+                name = viewModel.nickname
+                buffer = name.length.getBytes()
+                outputStream.write(buffer, 0, Int.SIZE_BYTES)
                 // 1. Write the sender name length
+                buffer = name.toByteArray()
+                outputStream.write(buffer)
 
-
+                Log.d(TAG, "send: successful")
             } catch (e: IOException) {
                 e.printStackTrace()
                 Log.e(TAG, "send: ", e)
             }
         }
-    }
-
-    private fun getBytes(num: Int): ByteArray {
-        val buffer = ByteBuffer.allocate(4) // int is 4 bytes
-        buffer.putInt(num)
-        return buffer.array()
-    }
-
-    private fun getBytes(num: Long): ByteArray {
-        val buffer = ByteBuffer.allocate(8) // long is 8 bytes
-        buffer.putLong(num)
-        return buffer.array()
     }
 
     private fun closeConnection() {

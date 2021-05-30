@@ -6,17 +6,23 @@ import android.net.wifi.p2p.WifiP2pManager
 import android.os.Bundle
 import android.os.Looper
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
+import androidx.appcompat.widget.Toolbar
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.zancheema.share.android.shareone.R
+import com.zancheema.share.android.shareone.common.share.getBytes
+import com.zancheema.share.android.shareone.common.share.getInt
+import com.zancheema.share.android.shareone.data.DefaultDataSource
 import com.zancheema.share.android.shareone.home.HomeFragmentDirections
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.IOException
 import java.net.InetSocketAddress
 import java.net.ServerSocket
@@ -27,6 +33,9 @@ private const val TAG = "ReceiveFragment"
 class ReceiveFragment : Fragment() {
 
     private val coroutineScope = CoroutineScope(Dispatchers.IO)
+    private val viewModel by viewModels<ReceiveViewModel> {
+        ReceiverViewModelFactory(DefaultDataSource(requireContext().applicationContext))
+    }
 
     // Parameters
     private var isGroupOwner: Boolean = false
@@ -85,6 +94,7 @@ class ReceiveFragment : Fragment() {
             Log.d(TAG, "connect: client")
             socket.connect(InetSocketAddress(hostAdd, 8888), 1000)
             receiver = Receiver(socket)
+            receiver.receive()
         }
 
         override fun disconnect() {
@@ -101,6 +111,7 @@ class ReceiveFragment : Fragment() {
             val socket = serverSocket.accept()
             Log.d(TAG, "connect: accepted")
             receiver = Receiver(socket)
+            receiver.receive()
         }
 
         override fun disconnect() {
@@ -117,10 +128,36 @@ class ReceiveFragment : Fragment() {
     private inner class Receiver(socket: Socket) {
 
         private val inputStream = socket.getInputStream()
+        private val outputStream = socket.getOutputStream()
 
+        suspend fun receive() {
+            try {
+                // Write Receiver name
+                var name = viewModel.nickname
+                var buffer = name.length.getBytes()
+                outputStream.write(buffer, 0, Int.SIZE_BYTES)
+                // 1. Write the sender name length
+                buffer = name.toByteArray()
+                outputStream.write(buffer)
 
-        fun receive() {
-
+                // Read sender name
+                // Read name length
+                buffer = ByteArray(Int.SIZE_BYTES)
+                inputStream.read(buffer)
+                val length = buffer.getInt()
+                // Read name string
+                buffer = ByteArray(length)
+                inputStream.read(buffer)
+                name = String(buffer)
+                Log.d(TAG, "receive: name: $name")
+                withContext(Dispatchers.Main) {
+                    val toolbar = requireActivity().findViewById<Toolbar>(R.id.toolbar)
+                    toolbar.title = resources.getString(R.string.receiving_from, name)
+                }
+            } catch (e: IOException) {
+                e.printStackTrace()
+                Log.e(TAG, "receive: ", e)
+            }
         }
     }
 
