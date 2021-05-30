@@ -7,7 +7,7 @@
 
         <variable
             name="share"
-            type="com.zancheema.share.android.shareone.common.LiveShare" />
+            type="com.zancheema.share.android.shareone.common.share.LiveShare" />
     </data>
 
     <androidx.cardview.widget.CardView

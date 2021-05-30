@@ -26,7 +26,7 @@ import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
 import com.zancheema.share.android.shareone.R
 import com.zancheema.share.android.shareone.broadcast.WiFiStatusBroadcastReceiver
-import com.zancheema.share.android.shareone.common.Shareable
+import com.zancheema.share.android.shareone.common.share.Shareable
 import com.zancheema.share.android.shareone.databinding.FragmentPrepareSendBinding
 import com.zancheema.share.android.shareone.util.EventObserver
 

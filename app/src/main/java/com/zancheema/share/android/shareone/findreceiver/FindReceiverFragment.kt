@@ -4,7 +4,7 @@ import android.annotation.SuppressLint
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.IntentFilter
-import android.net.Uri
+import android.net.wifi.p2p.WifiP2pConfig
 import android.net.wifi.p2p.WifiP2pDeviceList
 import android.net.wifi.p2p.WifiP2pInfo
 import android.net.wifi.p2p.WifiP2pManager
@@ -16,11 +16,13 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import com.zancheema.share.android.shareone.broadcast.WiFiDirectBroadcastReceiver
 import com.zancheema.share.android.shareone.broadcast.WiFiDirectConnectionStatus
 import com.zancheema.share.android.shareone.broadcast.WifiDirectListener
-import com.zancheema.share.android.shareone.common.Shareable
+import com.zancheema.share.android.shareone.common.share.Shareable
 import com.zancheema.share.android.shareone.databinding.FragmentFindReceiverBinding
+import com.zancheema.share.android.shareone.util.EventObserver
 
 private const val TAG = "FindReceiverFragment"
 
@@ -39,10 +41,6 @@ class FindReceiverFragment : Fragment(), WifiDirectListener {
         super.onCreate(savedInstanceState)
 
         shareables = FindReceiverFragmentArgs.fromBundle(requireArguments()).shareables
-        for (index in shareables.indices) Log.d(
-            TAG,
-            "onCreate: shareables[$index]: $${shareables[index]}"
-        )
     }
 
     override fun onCreateView(
@@ -67,6 +65,32 @@ class FindReceiverFragment : Fragment(), WifiDirectListener {
 
         viewDataBinding.lifecycleOwner = viewLifecycleOwner
         setUpViews()
+        setUpProcessing()
+    }
+
+    private fun setUpProcessing() {
+        viewModel.deviceSelectedEvent.observe(viewLifecycleOwner, EventObserver { device ->
+            connect(device.deviceAddress)
+        })
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun connect(address: String) {
+        val config = WifiP2pConfig()
+        config.deviceAddress = address
+        Log.d(TAG, "connect: $address")
+        manager.connect(channel, config, object : WifiP2pManager.ActionListener {
+            override fun onSuccess() {
+                Log.d(
+                    TAG,
+                    "onSuccess: Successfully connected to $address"
+                )
+            }
+
+            override fun onFailure(reason: Int) {
+                Log.d(TAG, "onFailure: Failed to connect to $address")
+            }
+        })
     }
 
     private fun setUpViews() {
@@ -109,13 +133,23 @@ class FindReceiverFragment : Fragment(), WifiDirectListener {
             if (address != null) {
 
                 val (isGroupOwner, groupOwnerAddress) = if (info.groupFormed && info.isGroupOwner) {
-                    Pair(first = true, second = false)
+                    Pair(true, null)
                 } else if (info.groupFormed) {
                     Pair(false, address.hostAddress)
                 } else {
+                    Log.d(TAG, "ConnectionInfoListener: not condition matched")
                     return@ConnectionInfoListener
                 }
-                // TODO: navigate using passing isGroupOwner and groupOwnerAddress as arguments
+                // Navigate using passing isGroupOwner and groupOwnerAddress as arguments
+                findNavController().navigate(
+                    FindReceiverFragmentDirections.actionFindReceiverFragmentToSendFragment(
+                        isGroupOwner,
+                        groupOwnerAddress,
+                        shareables
+                    )
+                )
+            } else {
+                Log.d(TAG, "ConnectionInfoListener: address is null")
             }
         }
 

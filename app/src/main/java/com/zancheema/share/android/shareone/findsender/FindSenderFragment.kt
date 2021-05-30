@@ -15,6 +15,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import com.zancheema.share.android.shareone.broadcast.WiFiDirectBroadcastReceiver
 import com.zancheema.share.android.shareone.broadcast.WiFiDirectConnectionStatus
 import com.zancheema.share.android.shareone.broadcast.WifiDirectListener
@@ -81,7 +82,7 @@ class FindSenderFragment : Fragment(), WifiDirectListener {
         if (address != null) {
 
             val (isGroupOwner, groupOwnerAddress) = if (info.groupFormed && info.isGroupOwner) {
-                Pair(first = true, second = false)
+                Pair(true, null)
             } else if (info.groupFormed) {
                 Pair(false, address.hostAddress)
             } else {
@@ -89,10 +90,13 @@ class FindSenderFragment : Fragment(), WifiDirectListener {
             }
             Log.d(TAG, "isGroupOwner: $isGroupOwner")
             Log.d(TAG, "groupOwnerAddress: $groupOwnerAddress")
-//            val args = Bundle()
-//            args.putBoolean("isGroupOwner", isGroupOwner)
-//            args.putString("groupOwnerAddress", groupOwnerAddress)
-//            navController.navigate(R.id.action_findSenderFragment_to_receiveFragment, args)
+
+            findNavController().navigate(
+                FindSenderFragmentDirections.actionFindSenderFragmentToReceiveFragment(
+                    isGroupOwner,
+                    groupOwnerAddress
+                )
+            )
         }
     }
 

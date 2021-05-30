@@ -62,7 +62,7 @@
         tools:layout="@layout/fragment_prepare_send">
         <argument
             android:name="shareables"
-            app:argType="com.zancheema.share.android.shareone.common.Shareable[]" />
+            app:argType="com.zancheema.share.android.shareone.common.share.Shareable[]" />
         <action
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
@@ -86,7 +86,7 @@
         tools:layout="@layout/fragment_find_receiver" >
         <argument
             android:name="shareables"
-            app:argType="com.zancheema.share.android.shareone.common.Shareable[]" />
+            app:argType="com.zancheema.share.android.shareone.common.share.Shareable[]" />
         <action
             android:id="@+id/action_findReceiverFragment_to_sendFragment"
             app:destination="@id/sendFragment" />
@@ -118,6 +118,13 @@
             app:nullable="true" />
         <argument
             android:name="shareables"
-            app:argType="com.zancheema.share.android.shareone.common.Shareable[]" />
+            app:argType="com.zancheema.share.android.shareone.common.share.Shareable[]" />
     </fragment>
+    <action
+        android:id="@+id/action_global_homeFragment"
+        app:destination="@id/homeFragment"
+        app:enterAnim="@android:anim/fade_in"
+        app:exitAnim="@android:anim/fade_out"
+        app:popUpTo="@id/nav_graph"
+        app:popUpToInclusive="true" />
 </navigation>

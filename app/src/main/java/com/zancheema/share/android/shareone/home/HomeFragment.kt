@@ -17,9 +17,8 @@ import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-import com.google.android.material.snackbar.Snackbar
 import com.zancheema.share.android.shareone.R
-import com.zancheema.share.android.shareone.common.Shareable
+import com.zancheema.share.android.shareone.common.share.Shareable
 import com.zancheema.share.android.shareone.data.DefaultDataSource
 import com.zancheema.share.android.shareone.databinding.FragmentHomeBinding
 import com.zancheema.share.android.shareone.util.EventObserver
