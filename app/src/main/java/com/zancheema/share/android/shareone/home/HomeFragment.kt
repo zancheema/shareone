@@ -144,7 +144,7 @@ class HomeFragment : Fragment() {
     }
 
     private fun launchFilePicker() {
-        Toast.makeText(requireContext(), R.string.press_and_hold_to_select, Toast.LENGTH_LONG)
+        Toast.makeText(requireContext(), R.string.press_and_hold_to_select_multiple_files, Toast.LENGTH_LONG)
             .show()
         selectFiles.launch(selectFilesIntent)
     }

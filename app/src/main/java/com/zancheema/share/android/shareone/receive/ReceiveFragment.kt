@@ -70,7 +70,7 @@ class ReceiveFragment : Fragment() {
         super.onActivityCreated(savedInstanceState)
         viewDataBinding.lifecycleOwner = viewLifecycleOwner
         initialize()
-        connector = ConnectorFactory().create()
+        connector = ReceiverConnectorFactory().create()
         coroutineScope.launch {
             connector.connect()
         }
@@ -91,8 +91,8 @@ class ReceiveFragment : Fragment() {
         })
     }
 
-    private inner class ConnectorFactory {
-        fun create(): Connector {
+    private inner class ReceiverConnectorFactory : ConnectorFactory<Connector> {
+        override fun create(): Connector {
             return if (isGroupOwner) Server() else Client(groupOwnerAddress!!)
         }
     }
@@ -108,7 +108,7 @@ class ReceiveFragment : Fragment() {
             receiver.receive()
         }
 
-        override fun disconnect() {
+        override fun closeConnection() {
             TODO("Not yet implemented")
         }
     }
@@ -125,15 +125,9 @@ class ReceiveFragment : Fragment() {
             receiver.receive()
         }
 
-        override fun disconnect() {
+        override fun closeConnection() {
             TODO("Not yet implemented")
         }
-    }
-
-    private interface Connector {
-        suspend fun connect()
-
-        fun disconnect()
     }
 
     private inner class Receiver(socket: Socket) {

@@ -10,6 +10,8 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
 import com.zancheema.share.android.shareone.databinding.ActivityMainBinding
+import com.zancheema.share.android.shareone.util.slideDown
+import com.zancheema.share.android.shareone.util.slideUp
 
 class MainActivity : AppCompatActivity() {
     private lateinit var navController: NavController
@@ -34,21 +36,9 @@ class MainActivity : AppCompatActivity() {
             run {
                 val currentDestination = destination.id
                 if (!canSelectFiles(previousDestination) && canSelectFiles(currentDestination)) {
-                    val animation =
-                        AnimationUtils.loadAnimation(applicationContext, R.anim.fab_slide_up)
-
-                    viewDataBinding.fabSelectFiles.apply {
-                        startAnimation(animation)
-                        visibility = View.VISIBLE
-                    }
+                    viewDataBinding.fabSelectFiles.slideUp()
                 } else if (!canSelectFiles(currentDestination) && canSelectFiles(previousDestination)) {
-                    val animation =
-                        AnimationUtils.loadAnimation(applicationContext, R.anim.fab_slide_down)
-
-                    viewDataBinding.fabSelectFiles.apply {
-                        startAnimation(animation)
-                        visibility = View.GONE
-                    }
+                    viewDataBinding.fabSelectFiles.slideDown()
                 }
                 previousDestination = currentDestination
             }

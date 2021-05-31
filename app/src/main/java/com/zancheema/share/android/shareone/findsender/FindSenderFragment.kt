@@ -15,16 +15,21 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.zancheema.share.android.shareone.broadcast.WiFiDirectBroadcastReceiver
 import com.zancheema.share.android.shareone.broadcast.WiFiDirectConnectionStatus
 import com.zancheema.share.android.shareone.broadcast.WifiDirectListener
+import com.zancheema.share.android.shareone.data.DefaultDataSource
 import com.zancheema.share.android.shareone.databinding.FragmentFindSenderBinding
 
 private const val TAG = "FindSenderFragment"
 
 class FindSenderFragment : Fragment(), WifiDirectListener {
 
+    private val viewModel by viewModels<FindSenderViewModel> {
+        FindSenderViewModelFactory(DefaultDataSource(requireContext().applicationContext))
+    }
     private lateinit var viewDataBinding: FragmentFindSenderBinding
 
     private lateinit var manager: WifiP2pManager
@@ -37,12 +42,13 @@ class FindSenderFragment : Fragment(), WifiDirectListener {
         savedInstanceState: Bundle?
     ): View {
         viewDataBinding = FragmentFindSenderBinding.inflate(inflater, container, false)
+            .apply { viewmodel = viewModel }
         return viewDataBinding.root
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-
+        viewDataBinding.lifecycleOwner = viewLifecycleOwner
         viewDataBinding.rippleBackground.startRippleAnimation()
         manager = requireContext().getSystemService(Context.WIFI_P2P_SERVICE) as WifiP2pManager
         channel = manager.initialize(requireContext(), Looper.getMainLooper(), null)

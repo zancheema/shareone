@@ -5,6 +5,9 @@
 
     <data>
 
+        <variable
+            name="viewmodel"
+            type="com.zancheema.share.android.shareone.findsender.FindSenderViewModel" />
     </data>
 
     <FrameLayout
@@ -16,7 +19,7 @@
             android:id="@+id/ripple_background"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:rb_color="#0099CC"
+            app:rb_color="@color/blue"
             app:rb_duration="3000"
             app:rb_radius="32dp"
             app:rb_rippleAmount="4"
@@ -24,10 +27,12 @@
 
             <ImageView
                 android:id="@+id/centerImage"
+                image_res="@{viewmodel.avatar.iconRes}"
+                place_holder_res="@{@drawable/ic_avatar_0}"
                 android:layout_width="64dp"
                 android:layout_height="64dp"
                 android:layout_centerInParent="true"
-                android:src="@drawable/ic_avatar_0" />
+                tools:src="@drawable/ic_avatar_0" />
         </com.skyfishjy.library.RippleBackground>
     </FrameLayout>
 </layout>

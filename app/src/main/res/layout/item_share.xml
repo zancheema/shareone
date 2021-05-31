@@ -13,6 +13,7 @@
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginHorizontal="8dp"
         android:layout_marginVertical="@dimen/card_margin_vertical_normal">
 
         <androidx.constraintlayout.widget.ConstraintLayout
