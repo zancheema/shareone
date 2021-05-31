@@ -14,11 +14,14 @@ import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.zancheema.share.android.shareone.R
 import com.zancheema.share.android.shareone.common.share.*
 import com.zancheema.share.android.shareone.data.DefaultDataSource
 import com.zancheema.share.android.shareone.databinding.FragmentSendBinding
 import com.zancheema.share.android.shareone.home.HomeFragmentDirections
+import com.zancheema.share.android.shareone.util.slideDown
+import com.zancheema.share.android.shareone.util.slideUp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -37,6 +40,8 @@ class SendFragment : Fragment() {
         SendViewModelFactory(DefaultDataSource(requireContext().applicationContext))
     }
     private lateinit var viewDataBinding: FragmentSendBinding
+    private lateinit var toolbar: Toolbar
+    private lateinit var fabOpenReceived: FloatingActionButton
 
     // Parameters
     private var isGroupOwner: Boolean = false
@@ -74,7 +79,16 @@ class SendFragment : Fragment() {
         }
     }
 
+    override fun onDestroy() {
+        connector.closeConnection()
+        super.onDestroy()
+    }
+
     private fun initialize() {
+        toolbar = requireActivity().findViewById(R.id.toolbar)
+        fabOpenReceived = requireActivity().findViewById(R.id.fabOpenReceived)
+        fabOpenReceived.slideDown()
+
         val listAdapter = LiveShareListAdapter(viewLifecycleOwner)
         viewDataBinding.rcShareList.adapter = listAdapter
         viewModel.shares.observe(viewLifecycleOwner) { shares ->
@@ -83,7 +97,7 @@ class SendFragment : Fragment() {
 
         requireActivity().onBackPressedDispatcher.addCallback(object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                closeConnection()
+                connector.closeConnection()
                 findNavController().navigate(HomeFragmentDirections.actionGlobalHomeFragment())
             }
         })
@@ -107,7 +121,7 @@ class SendFragment : Fragment() {
         }
 
         override fun closeConnection() {
-            TODO("Not yet implemented")
+            this@SendFragment.closeConnection()
         }
     }
 
@@ -124,7 +138,7 @@ class SendFragment : Fragment() {
         }
 
         override fun closeConnection() {
-            TODO("Not yet implemented")
+            this@SendFragment.closeConnection()
         }
     }
 
@@ -197,13 +211,24 @@ class SendFragment : Fragment() {
                         transferredBytes += bytes
                         withContext(Dispatchers.IO) { liveShare.update(transferredBytes) }
                     }
-//                    liveShare.complete()
+                    Log.d(
+                        TAG,
+                        "receive: [total, transferred]: [${shareable.size}, $transferredBytes]"
+                    )
+                }
+                // Notify sender that transfer is complete
+                withContext(Dispatchers.Main) {
+                    toolbar.setTitle(R.string.complete)
+                    fabOpenReceived.slideUp()
                 }
 
                 Log.d(TAG, "send: successful")
             } catch (e: IOException) {
                 e.printStackTrace()
                 Log.e(TAG, "send: ", e)
+                withContext(Dispatchers.Main) {
+                    toolbar.setTitle(R.string.cancelled)
+                }
             }
         }
     }

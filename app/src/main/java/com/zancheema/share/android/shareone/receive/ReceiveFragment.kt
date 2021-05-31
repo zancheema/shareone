@@ -15,11 +15,14 @@ import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.zancheema.share.android.shareone.R
 import com.zancheema.share.android.shareone.common.share.*
 import com.zancheema.share.android.shareone.data.DefaultDataSource
 import com.zancheema.share.android.shareone.databinding.FragmentReceiveBinding
 import com.zancheema.share.android.shareone.home.HomeFragmentDirections
+import com.zancheema.share.android.shareone.util.slideDown
+import com.zancheema.share.android.shareone.util.slideUp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -41,6 +44,8 @@ class ReceiveFragment : Fragment() {
         ReceiverViewModelFactory(DefaultDataSource(requireContext().applicationContext))
     }
     private lateinit var viewDataBinding: FragmentReceiveBinding
+    private lateinit var toolbar: Toolbar
+    private lateinit var fabOpenReceived: FloatingActionButton
 
     // Parameters
     private var isGroupOwner: Boolean = false
@@ -76,7 +81,16 @@ class ReceiveFragment : Fragment() {
         }
     }
 
+    override fun onDestroy() {
+        connector.closeConnection()
+        super.onDestroy()
+    }
+
     private fun initialize() {
+        toolbar = requireActivity().findViewById(R.id.toolbar)
+        fabOpenReceived = requireActivity().findViewById(R.id.fabOpenReceived)
+        fabOpenReceived.slideDown()
+
         val listAdapter = LiveShareListAdapter(viewLifecycleOwner)
         viewDataBinding.rcShareList.adapter = listAdapter
         viewModel.shares.observe(viewLifecycleOwner) { shares ->
@@ -85,7 +99,7 @@ class ReceiveFragment : Fragment() {
 
         requireActivity().onBackPressedDispatcher.addCallback(object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                closeConnection()
+                connector.closeConnection()
                 findNavController().navigate(HomeFragmentDirections.actionGlobalHomeFragment())
             }
         })
@@ -109,7 +123,7 @@ class ReceiveFragment : Fragment() {
         }
 
         override fun closeConnection() {
-            TODO("Not yet implemented")
+            this@ReceiveFragment.closeConnection()
         }
     }
 
@@ -126,7 +140,7 @@ class ReceiveFragment : Fragment() {
         }
 
         override fun closeConnection() {
-            TODO("Not yet implemented")
+            this@ReceiveFragment.closeConnection()
         }
     }
 
@@ -154,9 +168,8 @@ class ReceiveFragment : Fragment() {
                 buffer = ByteArray(length)
                 inputStream.read(buffer)
                 name = String(buffer)
-                Log.d(TAG, "receive: name: $name")
+                Log.d(TAG, "receive: senderName: $name")
                 withContext(Dispatchers.Main) {
-                    val toolbar = requireActivity().findViewById<Toolbar>(R.id.toolbar)
                     toolbar.title = resources.getString(R.string.receiving_from, name)
                 }
 
@@ -199,9 +212,19 @@ class ReceiveFragment : Fragment() {
                     Log.d(TAG, "receive: name[$index]: $name")
                     Log.d(TAG, "receive: size[$index]: $size")
                     val transferredBytes = copyFile(inputStream, FileOutputStream(f), size, share)
-//                    if (transferredBytes == size) share.complete()
-//                    share.complete()
+
+                    Log.d(TAG, "receive: [total, transferred]: [$size, $transferredBytes]")
+                    if (transferredBytes < size) {
+                        withContext(Dispatchers.Main) {
+                            toolbar.setTitle(R.string.cancelled)
+                        }
+                    }
                     Log.d(TAG, "receive: copied[$index]")
+                }
+                // Notify receiver that transfer is complete
+                withContext(Dispatchers.Main) {
+                    toolbar.setTitle(R.string.complete)
+                    fabOpenReceived.slideUp()
                 }
 
                 Log.d(TAG, "receive: successful")

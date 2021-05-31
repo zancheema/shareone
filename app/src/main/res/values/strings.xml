@@ -26,4 +26,6 @@
     <string name="receiving_from">Receiving from %s</string>
     <string name="receiving">Receiving...</string>
     <string name="sending">Sending...</string>
+    <string name="complete">Complete</string>
+    <string name="cancelled">Cancelled</string>
 </resources>

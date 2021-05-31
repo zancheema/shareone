@@ -1,8 +1,6 @@
 package com.zancheema.share.android.shareone
 
 import android.os.Bundle
-import android.view.View
-import android.view.animation.AnimationUtils
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.navigation.NavController
@@ -36,9 +34,9 @@ class MainActivity : AppCompatActivity() {
             run {
                 val currentDestination = destination.id
                 if (!canSelectFiles(previousDestination) && canSelectFiles(currentDestination)) {
-                    viewDataBinding.fabSelectFiles.slideUp()
+                    viewDataBinding.fabOpenReceived.slideUp()
                 } else if (!canSelectFiles(currentDestination) && canSelectFiles(previousDestination)) {
-                    viewDataBinding.fabSelectFiles.slideDown()
+                    viewDataBinding.fabOpenReceived.slideDown()
                 }
                 previousDestination = currentDestination
             }
