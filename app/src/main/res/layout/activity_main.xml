@@ -43,6 +43,7 @@
             android:layout_marginBottom="16dp"
             android:clickable="true"
             app:layout_constraintBottom_toBottomOf="parent"
+            android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
             app:srcCompat="@drawable/ic_baseline_folder_open_24"
             app:tint="@color/white" />

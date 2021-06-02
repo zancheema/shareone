@@ -26,7 +26,7 @@ class MainActivity : AppCompatActivity() {
             supportFragmentManager.findFragmentById(R.id.navHostFragment) as NavHostFragment
         navController = navHostFragment.navController
         setUpToolbar()
-        setUpViewVisibility()
+//        setUpViewVisibility() // skip this step for now
     }
 
     private fun setUpViewVisibility() {

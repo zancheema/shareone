@@ -1,6 +1,7 @@
 package com.zancheema.share.android.shareone.send
 
 import android.content.Context
+import android.content.Intent
 import android.net.wifi.p2p.WifiP2pConfig
 import android.net.wifi.p2p.WifiP2pManager
 import android.os.Bundle
@@ -9,6 +10,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
@@ -20,8 +22,6 @@ import com.zancheema.share.android.shareone.common.share.*
 import com.zancheema.share.android.shareone.data.DefaultDataSource
 import com.zancheema.share.android.shareone.databinding.FragmentSendBinding
 import com.zancheema.share.android.shareone.home.HomeFragmentDirections
-import com.zancheema.share.android.shareone.util.slideDown
-import com.zancheema.share.android.shareone.util.slideUp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -88,7 +88,7 @@ class SendFragment : Fragment() {
     private fun initialize() {
         toolbar = requireActivity().findViewById(R.id.toolbar)
         fabOpenReceived = requireActivity().findViewById(R.id.fabOpenReceived)
-        fabOpenReceived.slideDown()
+//        fabOpenReceived.slideDown()
 
         val listAdapter = LiveShareListAdapter(viewLifecycleOwner)
         viewDataBinding.rcShareList.adapter = listAdapter
@@ -98,8 +98,12 @@ class SendFragment : Fragment() {
 
         requireActivity().onBackPressedDispatcher.addCallback(object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                connector.closeConnection()
-                findNavController().navigate(HomeFragmentDirections.actionGlobalHomeFragment())
+                if (listOf(Intent.ACTION_SEND, Intent.ACTION_SEND_MULTIPLE).contains(requireActivity().intent.action)) {
+                    requireActivity().finish()
+                } else {
+                    findNavController().navigate(HomeFragmentDirections.actionGlobalHomeFragment())
+                    remove()
+                }
             }
         })
     }
@@ -220,7 +224,7 @@ class SendFragment : Fragment() {
                 // Notify sender that transfer is complete
                 withContext(Dispatchers.Main) {
                     toolbar.setTitle(R.string.complete)
-                    fabOpenReceived.slideUp()
+//                    fabOpenReceived.slideUp()
                 }
 
                 Log.d(TAG, "send: successful")

@@ -28,17 +28,17 @@ class HomeViewModel(
         get() = _prepareSendEvent
 
     fun prepareSend(shareable: Shareable) {
-        Log.d(TAG, "prepareSend: called")
+        Log.d(TAG, "prepareSend(Shareable): called")
         _prepareSendEvent.value = Event(arrayOf(shareable))
     }
 
     fun prepareSend(shareables: Array<Shareable>) {
-        Log.d(TAG, "prepareSend: called")
+        Log.d(TAG, "prepareSend(Array<Shareable>): called")
         _prepareSendEvent.value = Event(shareables)
     }
 
     fun prepareSend(shareables: Collection<Shareable>) {
-        Log.d(TAG, "prepareSend: called")
+        Log.d(TAG, "prepareSend:(Collection<Shareable>) called")
         _prepareSendEvent.value = Event(shareables.toTypedArray())
     }
 

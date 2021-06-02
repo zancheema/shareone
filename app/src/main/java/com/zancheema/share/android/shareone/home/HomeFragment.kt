@@ -24,8 +24,6 @@ import com.zancheema.share.android.shareone.common.share.Shareable
 import com.zancheema.share.android.shareone.data.DefaultDataSource
 import com.zancheema.share.android.shareone.databinding.FragmentHomeBinding
 import com.zancheema.share.android.shareone.util.EventObserver
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 
 private const val TAG = "HomeFragment"
 
@@ -234,6 +232,7 @@ class HomeFragment : Fragment() {
         })
         viewModel.prepareSendEvent.observe(viewLifecycleOwner, EventObserver { shareables ->
             Log.d(TAG, "setUpNavigation: prepareSendEvent")
+            if (shareables.size == 0) return@EventObserver
             findNavController().navigate(
                 HomeFragmentDirections.actionHomeFragmentToPrepareSendFragment(
                     shareables
