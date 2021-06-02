@@ -117,7 +117,7 @@ class ReceiveFragment : Fragment() {
 
         override suspend fun connect() {
             Log.d(TAG, "connect: client")
-            socket.connect(InetSocketAddress(hostAdd, 8888), 1000)
+            socket.connect(InetSocketAddress(hostAdd, 5000), 1000)
             receiver = Receiver(socket)
             receiver.receive()
         }
@@ -130,7 +130,7 @@ class ReceiveFragment : Fragment() {
     private inner class Server : Connector {
 
         override suspend fun connect() {
-            serverSocket = ServerSocket(8888)
+            serverSocket = ServerSocket(5000)
 //                .apply { soTimeout = 1000 } // throwing poll timeout error here
             Log.d(TAG, "connect: server accepting...")
             val socket = serverSocket.accept()

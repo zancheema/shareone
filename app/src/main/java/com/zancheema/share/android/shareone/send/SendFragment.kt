@@ -30,6 +30,7 @@ import java.io.IOException
 import java.net.InetSocketAddress
 import java.net.ServerSocket
 import java.net.Socket
+import java.net.SocketException
 
 private const val TAG = "SendFragment"
 
@@ -115,7 +116,7 @@ class SendFragment : Fragment() {
 
         override suspend fun connect() {
             Log.d(TAG, "connect: client")
-            socket.connect(InetSocketAddress(hostAdd, 8888), 1000)
+            socket.connect(InetSocketAddress(hostAdd, 5000), 1000)
             sender = Sender(socket, shareables)
             sender.send()
         }
@@ -128,7 +129,7 @@ class SendFragment : Fragment() {
     private inner class Server : Connector {
 
         override suspend fun connect() {
-            serverSocket = ServerSocket(8888)
+            serverSocket = ServerSocket(5000)
 //                .apply { soTimeout = 1000 } // throwing poll timeout error here
             Log.d(TAG, "connect: server accepting...")
             val socket = serverSocket.accept()
@@ -228,6 +229,12 @@ class SendFragment : Fragment() {
                 Log.e(TAG, "send: ", e)
                 withContext(Dispatchers.Main) {
                     toolbar.setTitle(R.string.cancelled)
+                }
+            } catch (e: SocketException) {
+                e.printStackTrace()
+                Log.e(TAG, "send: ", e)
+                withContext(Dispatchers.Main) {
+                    toolbar.setTitle(R.string.error)
                 }
             }
         }
